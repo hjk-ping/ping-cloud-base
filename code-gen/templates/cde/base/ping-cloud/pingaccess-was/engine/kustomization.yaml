@@ -49,6 +49,14 @@ patchesJson6902:
     - op: replace
       path: /spec/rules/1/host
       value: pingfederate-admin.${DNS_ZONE}
+    
+    # PingFederate through PingAccess-WAS
+    - op: replace
+      path: /spec/tls/0/hosts/1
+      value: pingfederate.${DNS_ZONE}
+    - op: replace
+      path: /spec/rules/1/host
+      value: pingfederate.${DNS_ZONE}
 
     # Grafana to pingaccess was runtime
     - op: replace
