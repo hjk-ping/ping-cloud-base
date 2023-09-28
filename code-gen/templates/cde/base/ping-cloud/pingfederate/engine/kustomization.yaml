@@ -39,12 +39,10 @@ patchesJson6902:
     kind: Ingress
     name: pingfederate-ingress
   patch: |
-    - op: replace
-      path: /spec/tls/0/hosts/0
-      value: pingfederate.${DNS_ZONE}
-    - op: replace
-      path: /spec/rules/0/host
-      value: pingfederate.${DNS_ZONE}
+    - op: remove
+      path: /spec/tls/0/hosts/-
+    - op: remove
+      path: /spec/rules/-
     # PingFederate global ingress
     - op: add
       path: /spec/tls/0/hosts/-

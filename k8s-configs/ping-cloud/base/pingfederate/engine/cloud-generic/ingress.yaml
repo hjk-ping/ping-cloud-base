@@ -11,7 +11,7 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
-  ingressClassName: nginx-private
+  ingressClassName: nginx-public
   tls:
   - hosts:
     - pingfederate-dev.ping-demo.com
