@@ -26,13 +26,13 @@ spec:
     - hosts:
         - pingaccess-admin-dev.ping-demo.com
         - pingfederate-admin-dev.ping-demo.com
-        - pingfederate-dev.ping-demo.com
         - monitoring-dev.ping-demo.com
         - prometheus-dev.ping-demo.com
         - logs-dev.ping-demo.com
         - pingcentral-admin-dev.ping-demo.com
         - healthcheck-httpbin-pa-was-dev.ping-demo.com
         - argocd-dev.ping-demo.com
+        - pingfederate-dev.ping-demo.com
 
   rules:
     - host: pingaccess-admin-dev.ping-demo.com
@@ -47,17 +47,6 @@ spec:
                 port:
                   number: 443
     - host: pingfederate-admin-dev.ping-demo.com
-      http:
-        paths:
-          # This rule gives external access to the PingFederate admin service
-          - pathType: Prefix
-            path: /
-            backend:
-              service:
-                name: pingaccess-was
-                port:
-                  number: 443
-    - host: pingfederate-dev.ping-demo.com
       http:
         paths:
           # This rule gives external access to the PingFederate admin service
@@ -127,6 +116,17 @@ spec:
       http:
         paths:
           # This rule allows external access to Argo CD via the pingaccess-was runtime service
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: pingaccess-was
+                port:
+                  number: 443
+    - host: pingfederate-dev.ping-demo.com
+      http:
+        paths:
+          # This rule gives external access to the PingFederate admin service
           - pathType: Prefix
             path: /
             backend:
