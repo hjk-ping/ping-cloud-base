@@ -8,7 +8,8 @@ metadata:
 spec:
   ports:
   - port: 9031
-    name: pingfederate-runtime
+    name: pf-runtime
+    targetPort: pf-runtime
   - port: 8080
     name: metrics
   - port: 8079

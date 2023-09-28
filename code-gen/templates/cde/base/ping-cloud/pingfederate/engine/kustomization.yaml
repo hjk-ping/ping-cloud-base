@@ -62,7 +62,7 @@ patchesJson6902:
               service:
                name: pingfederate
                port:
-                 number: 9031
+                 name: pf-runtime
 
 # pingfederate radius
 - target:
