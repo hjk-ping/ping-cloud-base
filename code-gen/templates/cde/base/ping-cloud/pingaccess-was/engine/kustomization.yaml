@@ -93,11 +93,3 @@ patchesJson6902:
       path: /spec/tls/0/hosts/6
     - op: remove
       path: /spec/rules/6
-    
-    # PingFederate through PingAccess-WAS
-    - op: replace
-      path: /spec/tls/0/hosts/6
-      value: pingfederate.${DNS_ZONE}
-    - op: replace
-      path: /spec/rules/6/host
-      value: pingfederate.${DNS_ZONE}

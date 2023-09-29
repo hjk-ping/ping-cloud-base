@@ -32,35 +32,35 @@ patchesJson6902:
 
 ### Ingress patches ###
 
-# pingfederate runtime
-- target:
-    group: networking.k8s.io
-    version: v1
-    kind: Ingress
-    name: pingfederate-ingress
-  patch: |
-    - op: remove
-      path: /spec/tls/0/hosts/-
-    - op: remove
-      path: /spec/rules/-
-    # PingFederate global ingress
-    - op: add
-      path: /spec/tls/0/hosts/-
-      value: pf.${ENV}.${GLOBAL_TENANT_DOMAIN}
-    - op: add
-      path: /spec/rules/-
-      value:
-        host: pf.${ENV}.${GLOBAL_TENANT_DOMAIN}
-        http:
-          paths:
-          # This rule gives external access to the global pingfederate runtime service
-          - pathType: Prefix
-            path: /
-            backend:
-              service:
-               name: pingfederate
-               port:
-                 name: pf-runtime
+# # pingfederate runtime
+# - target:
+#     group: networking.k8s.io
+#     version: v1
+#     kind: Ingress
+#     name: pingfederate-ingress
+#   patch: |
+#     - op: remove
+#       path: /spec/tls/0/hosts/-
+#     - op: remove
+#       path: /spec/rules/-
+#     # PingFederate global ingress
+#     - op: add
+#       path: /spec/tls/0/hosts/-
+#       value: pf.${ENV}.${GLOBAL_TENANT_DOMAIN}
+#     - op: add
+#       path: /spec/rules/-
+#       value:
+#         host: pf.${ENV}.${GLOBAL_TENANT_DOMAIN}
+#         http:
+#           paths:
+#           # This rule gives external access to the global pingfederate runtime service
+#           - pathType: Prefix
+#             path: /
+#             backend:
+#               service:
+#                name: pingfederate
+#                port:
+#                  name: pf-runtime
 
 # pingfederate radius
 - target:

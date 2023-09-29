@@ -16,6 +16,7 @@ spec:
   - hosts:
     - pingaccess-dev.ping-demo.com
     - healthcheck-httpbin-pa-dev.ping-demo.com
+    - pingfederate-dev.ping-demo.com
   rules:
   - host: pingaccess-dev.ping-demo.com
     http:
@@ -39,6 +40,17 @@ spec:
             name: pingaccess
             port:
               number: 443
+  - host: pingfederate-dev.ping-demo.com
+    http:
+      paths:
+        # This rule gives external access to the PingFederate Engines
+        - pathType: Prefix
+          path: /
+          backend:
+            service:
+              name: pingaccess
+              port:
+                number: 443
 
 
 ---

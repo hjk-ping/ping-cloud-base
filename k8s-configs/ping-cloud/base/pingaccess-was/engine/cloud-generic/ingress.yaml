@@ -32,7 +32,6 @@ spec:
         - pingcentral-admin-dev.ping-demo.com
         - healthcheck-httpbin-pa-was-dev.ping-demo.com
         - argocd-dev.ping-demo.com
-        - pingfederate-dev.ping-demo.com
 
   rules:
     - host: pingaccess-admin-dev.ping-demo.com
@@ -123,14 +122,4 @@ spec:
                 name: pingaccess-was
                 port:
                   number: 443
-    - host: pingfederate-dev.ping-demo.com
-      http:
-        paths:
-          # This rule gives external access to the PingFederate admin service
-          - pathType: Prefix
-            path: /
-            backend:
-              service:
-                name: pingaccess-was
-                port:
-                  number: 443
+

@@ -66,6 +66,32 @@ patchesJson6902:
       path: /spec/rules/1/host
       value: healthcheck-httpbin-pa.${DNS_ZONE}
 
+    # PingFederate through PingAccess
+    - op: replace
+      path: /spec/tls/0/hosts/2
+      value: pingfederate.${DNS_ZONE}
+    - op: replace
+      path: /spec/rules/2/host
+      value: pingfederate.${DNS_ZONE}
+
+    - op: add
+      path: /spec/tls/0/hosts/-
+      value: pf.${ENV}.${GLOBAL_TENANT_DOMAIN}
+    - op: add
+      path: /spec/rules/-
+      value:
+        host: pf.${ENV}.${GLOBAL_TENANT_DOMAIN}
+        http:
+          paths:
+          # This rule gives external access to the global pingfederate runtime service
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+               name: pingaccess
+               port:
+                 name: 443
+
 
 # pingaccess agent
 - target:
