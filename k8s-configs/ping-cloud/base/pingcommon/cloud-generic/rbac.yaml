@@ -93,6 +93,14 @@ rules:
     - list
     - watch
     - get
+  - apiGroups:
+    - ""
+    resources:
+    - "endpoints"
+    verbs:
+    - get
+    - list
+    - watch
 
 ---
 
