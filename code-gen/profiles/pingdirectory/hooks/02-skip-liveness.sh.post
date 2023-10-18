@@ -1,0 +1,6 @@
+#!/bin/bash
+
+${VERBOSE} && set -x
+
+
+exit 0
