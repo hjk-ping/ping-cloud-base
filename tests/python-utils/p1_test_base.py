@@ -15,15 +15,15 @@ class P1TestBase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        client = p1_utils.get_client(p1_utils.WORKERAPP_CLIENT)
+        client = p1_utils.get_client()
         P1TestBase.worker_app_token_session = OAuth2Session(
             client["client_id"], token=client["token"]
         )
         cluster_name = os.getenv("CLUSTER_NAME", "not_set")
         P1TestBase.environment_name = (
-            "ci-cd" if cluster_name.startswith("ci-cd") else cluster_name
+            "ci-cd" if cluster_name.startswith("ci-cd") else "dev"
         )
-        P1TestBase.population_name = f"{cluster_name}-{os.getenv('CI_COMMIT_REF_SLUG')}"
+        P1TestBase.population_name = f"{cluster_name}"
         P1TestBase.cluster_env_id = cls.get(
             endpoint=f"{p1_utils.API_LOCATION}/environments",
             name=P1TestBase.environment_name,
