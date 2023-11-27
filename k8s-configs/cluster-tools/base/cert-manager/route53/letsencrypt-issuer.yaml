@@ -16,8 +16,7 @@ spec:
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
       name: letsencrypt-prod
-    # to match the duration field on Certificate  
-    enableDurationFeature: true
+
     # ACME DNS-01 provider configurations
     solvers:
     - dns01:
