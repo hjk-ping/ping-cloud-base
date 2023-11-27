@@ -10,6 +10,3 @@ spec:
     kind: ClusterIssuer
   dnsNames:
   - '*.ping-demo.com'
-  duration: 2160h
-  renewBefore: 360h
-
