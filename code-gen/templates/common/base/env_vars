@@ -277,9 +277,9 @@ PINGFEDERATE_HEALTHCHECK_SCHEDULE="* * * * *"
 
 
 # cert-manager variables
-# Note 90 days (aka 2160 hours) is the max Lets Encrypt allow rotation to occur.
-# If you want to override it must be less than 90 days.
-CERT_DURATION=2160h
-
-# Renew before 30 days (aka 720 hours) of expiration. Meaning if cert expires in 90 days we will rotate and renew in 60 days
+# The maximum duration allowed by Let's Encrypt for certificate rotation is 90 days (equivalent to 2160 hours).
+# See here for more details: https://letsencrypt.org/docs/faq/#what-is-the-lifetime-for-let-s-encrypt-certificates-for-how-long-are-they-valid
+# But it allows the certificate to be renewed before the duration. 
+# Renewing before 30 days (aka 720 hours) of expiration is suggested by let's encrypt
+# Meaning if cert expires in 90 days we will rotate and renew in 60 days
 CERT_RENEW_BEFORE=720h

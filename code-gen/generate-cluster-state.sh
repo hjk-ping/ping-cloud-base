@@ -454,7 +454,8 @@ ${PROM_SLACK_CHANNEL}
 ${DASH_REPO_URL}
 ${DASH_REPO_BRANCH}
 ${APP_RESYNC_SECONDS}
-${IMAGE_LIST}'
+${IMAGE_LIST}
+${CERT_RENEW_BEFORE}'
 
 # Variables to replace within the generated cluster state code
 REPO_VARS="${REPO_VARS:-${DEFAULT_VARS}}"
