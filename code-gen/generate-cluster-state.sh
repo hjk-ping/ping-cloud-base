@@ -784,6 +784,8 @@ echo "Initial APP_RESYNC_SECONDS: ${APP_RESYNC_SECONDS}"
 
 echo "Initial DASHBOARD_REPO_URL: ${DASHBOARD_REPO_URL}"
 
+echo "Initial CERT_RENEW_BEFORE: ${CERT_RENEW_BEFORE}"
+
 echo ---
 
 
@@ -1000,6 +1002,8 @@ export PA_GCOPTION='-XX:+UseParallelGC'
 
 export APP_RESYNC_SECONDS="${APP_RESYNC_SECONDS:-60}"
 
+export CERT_RENEW_BEFORE="${CERT_RENEW_BEFORE:-720h}"
+
 ########################################################################################################################
 # Print out the final value being used for each variable.
 ########################################################################################################################
@@ -1084,6 +1088,8 @@ echo "Using IMAGE_LIST: ${IMAGE_LIST}"
 echo "Using IMAGE_TAG_PREFIX: ${IMAGE_TAG_PREFIX}"
 
 echo "Using DASHBOARD_REPO_URL: ${DASHBOARD_REPO_URL}"
+
+echo "Using CERT_RENEW_BEFORE: ${CERT_RENEW_BEFORE}"
 
 echo ---
 

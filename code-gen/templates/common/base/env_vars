@@ -282,4 +282,4 @@ PINGFEDERATE_HEALTHCHECK_SCHEDULE="* * * * *"
 # But it allows the certificate to be renewed before the duration. 
 # Renewing before 30 days (aka 720 hours) of expiration is suggested by let's encrypt
 # Meaning if cert expires in 90 days we will rotate and renew in 60 days
-CERT_RENEW_BEFORE=720h
+CERT_RENEW_BEFORE=${CERT_RENEW_BEFORE}
