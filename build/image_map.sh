@@ -20,7 +20,6 @@ export IMAGE_MAP="pingcloud-apps/pingaccess
    pingcloud-services/p14c-integration
    pingcloud-services/metadata
    pingcloud-services/healthcheck
-   pingcloud-solutions/ansible-beluga
    pingcloud-monitoring/logstash
    pingcloud-monitoring/enrichment-bootstrap
    pingcloud-monitoring/os-bootstrap
@@ -34,3 +33,5 @@ export IMAGE_MAP="pingcloud-apps/pingaccess
    pingcloud-services/sigsci-agent
    pingcloud-services/grp-radiusproxy
    pingcloud-services/ingress-bootstrap"
+
+export CHART_MAP="p1as-beluga-tools"

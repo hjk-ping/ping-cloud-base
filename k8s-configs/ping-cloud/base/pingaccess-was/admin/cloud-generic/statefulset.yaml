@@ -319,7 +319,7 @@ spec:
             optional: false
         - secretRef:
             name: pingaccess-was-admin-p14c
-            optional: true
+            optional: false
       securityContext:
         fsGroup: 9999
       volumes:
@@ -366,6 +366,8 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: out-dir
+      annotations:
+        volume.autoscaler.kubernetes.io/ignore: "true"
     spec:
       accessModes:
       - ReadWriteOnce

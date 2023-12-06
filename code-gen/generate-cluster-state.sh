@@ -102,6 +102,9 @@
 #                                  |                                                    |
 # CLUSTER_STATE_REPO_URL           | The URL of the cluster-state repo.                 | https://github.com/pingidentity/ping-cloud-base
 #                                  |                                                    |
+# DEFAULT_CLUSTER_UPTIME           | The cluster default uptime used by kube-downscaler | Mon-Fri 09:00-:18:00 UTC
+#                                  | to downscale resource outside workhours            |
+#                                  |                                                    |
 # ENVIRONMENTS                     | The environments the customer is entitled to. This | dev test stage prod customer-hub
 #                                  | will be a subset of SUPPORTED_ENVIRONMENT_TYPES    |
 #                                  |                                                    |
@@ -142,9 +145,6 @@
 # IS_MULTI_CLUSTER                 | Flag indicating whether or not this is a           | false
 #                                  | multi-cluster deployment.                          |
 #                                  |                                                    |
-# IS_MY_PING                       | A flag indicating whether or not this is a MyPing  | The SSM path: /pcpt/customer/sso/is-myping
-#                                  | customer.                                          |
-#                                  |                                                    |
 # K8S_GIT_BRANCH                   | The Git branch within the above Git URL.           | The git branch where this script
 #                                  |                                                    | exists, i.e. CI_COMMIT_REF_NAME
 #                                  |                                                    |
@@ -152,6 +152,9 @@
 #                                  |                                                    |
 # KARPENTER_INSTANCE_PROFILE       | Karpenter Instance profile attached to EKS Clsuter | KarpenterInstanceProfile
 #                                  | IAM Node role                                      |
+#                                  |                                                    |
+# KARPENTER_CONTROLLER_IAM_ROLE    | IAM role that the Karpenter controller will use to | KarpenterControllerRole
+#                                  | provision new instances                            |
 #                                  |                                                    |
 # LOG_ARCHIVE_URL                  | The URL of the log archives. If provided, logs are | The string "unused".
 #                                  | periodically captured and sent to this URL. For    |
@@ -411,6 +414,7 @@ ${MYSQL_DATABASE}
 ${CLUSTER_NAME}
 ${CLUSTER_NAME_LC}
 ${CLUSTER_ENDPOINT}
+${DEFAULT_CLUSTER_UPTIME}
 ${KARPENTER_INSTANCE_PROFILE}
 ${DNS_ZONE}
 ${VALUES_FILES_DNS_ZONE}
@@ -454,7 +458,8 @@ ${PROM_SLACK_CHANNEL}
 ${DASH_REPO_URL}
 ${DASH_REPO_BRANCH}
 ${APP_RESYNC_SECONDS}
-${IMAGE_LIST}'
+${IMAGE_LIST}
+${CERT_RENEW_BEFORE}'
 
 # Variables to replace within the generated cluster state code
 REPO_VARS="${REPO_VARS:-${DEFAULT_VARS}}"
@@ -561,43 +566,6 @@ get_is_ga_variable() {
     export IS_GA="${IS_GA}"
   else
     export IS_GA='false'
-  fi
-}
-
-########################################################################################################################
-# Export the IS_MY_PING environment variable for the provided customer. If it's already present as a boolean environment
-# variable, then export it as is. Otherwise, if the SSM path prefix for it is not 'unused', then try to retrieve it out
-# of SSM. On error, print a warning message, but default the value to false. On success, use the value from SSM.
-# Otherwise, default it to false.
-#
-# Arguments
-#   ${1} -> The value of the IS_MY_PING flag.
-########################################################################################################################
-get_is_myping_variable() {
-  if test "${IS_MY_PING}" = 'true' || test "${IS_MY_PING}" = 'false'; then
-    export IS_MY_PING="${IS_MY_PING}"
-    return
-  fi
-
-  local ssm_path_prefix="$1"
-
-  # Default false
-  IS_MY_PING='false'
-
-  if [ "${ssm_path_prefix}" != "unused" ]; then
-    # Getting value from ssm parameter store.
-    if ! ssm_value=$(get_ssm_value "${ssm_path_prefix}"); then
-      echo "Warn: ${ssm_value}"
-      echo "Defaulting IS_MY_PING=false."
-    else
-      IS_MY_PING="${ssm_value}"
-    fi
-  fi
-
-  if test "${IS_MY_PING}" = 'true' || test "${IS_MY_PING}" = 'false'; then
-    export IS_MY_PING="${IS_MY_PING}"
-  else
-    export IS_MY_PING='false'
   fi
 }
 
@@ -771,6 +739,8 @@ echo "Initial NLB_NGX_PUBLIC_ANNOTATION_KEY_VALUE: ${NLB_NGX_PUBLIC_ANNOTATION_K
 
 echo "Initial CLUSTER_ENDPOINT: ${CLUSTER_ENDPOINT}"
 echo "Initial KARPENTER_INSTANCE_PROFILE: ${KARPENTER_INSTANCE_PROFILE}"
+echo "Initial KARPENTER_CONTROLLER_IAM_ROLE: ${KARPENTER_CONTROLLER_IAM_ROLE}"
+echo "Initial DEFAULT_CLUSTER_UPTIME: ${DEFAULT_CLUSTER_UPTIME}"
 
 echo "Initial SLACK_CHANNEL: ${SLACK_CHANNEL}"
 echo "Initial NON_GA_SLACK_CHANNEL: ${NON_GA_SLACK_CHANNEL}"
@@ -782,6 +752,8 @@ echo "Initial IMAGE_TAG_PREFIX: ${IMAGE_TAG_PREFIX}"
 echo "Initial APP_RESYNC_SECONDS: ${APP_RESYNC_SECONDS}"
 
 echo "Initial DASHBOARD_REPO_URL: ${DASHBOARD_REPO_URL}"
+
+echo "Initial CERT_RENEW_BEFORE: ${CERT_RENEW_BEFORE}"
 
 echo ---
 
@@ -882,6 +854,8 @@ export IRSA_INGRESS_ANNOTATION_KEY_VALUE=${IRSA_INGRESS_ANNOTATION_KEY_VALUE:-''
 
 export CLUSTER_ENDPOINT=${CLUSTER_ENDPOINT:-''}
 export KARPENTER_INSTANCE_PROFILE=${KARPENTER_INSTANCE_PROFILE:-"KarpenterInstanceProfile"}
+export KARPENTER_CONTROLLER_IAM_ROLE=${KARPENTER_CONTROLLER_IAM_ROLE:-"KarpenterControllerRole"}
+export DEFAULT_CLUSTER_UPTIME=${DEFAULT_CLUSTER_UPTIME:-"Mon-Fri 09:00-:18:00 UTC"}
 
 export KARPENTER_ROLE_ANNOTATION_KEY_VALUE=${KARPENTER_ROLE_ANNOTATION_KEY_VALUE:-''}
 
@@ -981,8 +955,6 @@ if test ! "${KNOWN_HOSTS_CLUSTER_STATE_REPO}"; then
 fi
 export KNOWN_HOSTS_CLUSTER_STATE_REPO
 
-get_is_myping_variable "${CUSTOMER_SSO_SSM_PATH_PREFIX}/is-myping"
-
 # Set some product specific variables
 export USER_BASE_DN="${USER_BASE_DN:-dc=example,dc=com}"
 export USER_BASE_DN_2="${USER_BASE_DN_2}"
@@ -998,6 +970,8 @@ export PA_MAX_YGEN=512m
 export PA_GCOPTION='-XX:+UseParallelGC'
 
 export APP_RESYNC_SECONDS="${APP_RESYNC_SECONDS:-60}"
+
+export CERT_RENEW_BEFORE="${CERT_RENEW_BEFORE:-720h}"
 
 ########################################################################################################################
 # Print out the final value being used for each variable.
@@ -1067,6 +1041,7 @@ echo "Using IRSA_INGRESS_ANNOTATION_KEY_VALUE: ${IRSA_INGRESS_ANNOTATION_KEY_VAL
 
 echo "Using CLUSTER_ENDPOINT: ${CLUSTER_ENDPOINT}"
 echo "Using KARPENTER_INSTANCE_PROFILE: ${KARPENTER_INSTANCE_PROFILE}"
+echo "Using KARPENTER_CONTROLLER_IAM_ROLE: ${KARPENTER_CONTROLLER_IAM_ROLE}"
 
 echo "Using KARPENTER_ROLE_ANNOTATION_KEY_VALUE: ${KARPENTER_ROLE_ANNOTATION_KEY_VALUE}"
 
@@ -1083,6 +1058,8 @@ echo "Using IMAGE_LIST: ${IMAGE_LIST}"
 echo "Using IMAGE_TAG_PREFIX: ${IMAGE_TAG_PREFIX}"
 
 echo "Using DASHBOARD_REPO_URL: ${DASHBOARD_REPO_URL}"
+
+echo "Using CERT_RENEW_BEFORE: ${CERT_RENEW_BEFORE}"
 
 echo ---
 
@@ -1174,7 +1151,7 @@ for ENV_OR_BRANCH in ${SUPPORTED_ENVIRONMENT_TYPES}; do
       ;;
   esac
 
-  # Update the Let's encrypt server to use staging/production based on GA/MyPing customers or the environment type.
+  # Update the Let's encrypt server to use staging/production based on GA customers or the environment type.
   PROD_LETS_ENCRYPT_SERVER='https://acme-v02.api.letsencrypt.org/directory'
   STAGE_LETS_ENCRYPT_SERVER='https://acme-staging-v02.api.letsencrypt.org/directory'
 
@@ -1261,7 +1238,7 @@ for ENV_OR_BRANCH in ${SUPPORTED_ENVIRONMENT_TYPES}; do
   # shellcheck disable=SC2016
   KARPENTER_ROLE_TEMPLATE='eks.amazonaws.com/role-arn: arn:aws:iam::${ssm_value}:role'
   set_var "KARPENTER_ROLE_ANNOTATION_KEY_VALUE" "" "${ACCOUNT_BASE_PATH}" "${ENV}" \
-          "${KARPENTER_ROLE_TEMPLATE}/KarpenterControllerRole"
+          "${KARPENTER_ROLE_TEMPLATE}/${KARPENTER_CONTROLLER_IAM_ROLE}"
 
   set_var "CLUSTER_ENDPOINT" "" "${ACCOUNT_BASE_PATH}${ENV}" "/cluster_endpoint"
 
@@ -1362,6 +1339,19 @@ for ENV_OR_BRANCH in ${SUPPORTED_ENVIRONMENT_TYPES}; do
 
     # Add IS_BELUGA_ENV to the base values.yaml
     substitute_vars "${ENV_DIR}/values-files" '${IS_BELUGA_ENV}'
+
+    # Resetting to empty string , once versent is done https://pingidentity.atlassian.net/browse/PP-5719 and will remove this code as per PDO-5136
+    export IRSA_PING_ANNOTATION_KEY_VALUE=""
+    export IRSA_PA_ANNOTATION_KEY_VALUE=""
+    export IRSA_PD_ANNOTATION_KEY_VALUE=""
+    export IRSA_PF_ANNOTATION_KEY_VALUE=""
+    export IRSA_CWAGENT_ANNOTATION_KEY_VALUE=""
+
+    sed -i.bak -e "/disable-karpenter/ s|^#*|#|g" "${K8S_CONFIGS_DIR}/base/cluster-tools/karpenter/kustomization.yaml"
+    sed -i.bak -e "/disable-kubedownscaler/ s|^#*|#|g" "${K8S_CONFIGS_DIR}/base/cluster-tools/kube-downscaler/kustomization.yaml"
+
+    rm -f "${K8S_CONFIGS_DIR}/base/cluster-tools/karpenter/kustomization.yaml.bak"
+    rm -f "${K8S_CONFIGS_DIR}/base/cluster-tools/kube-downscaler/kustomization.yaml.bak"
 
     # Update patches related to Beluga developer CDEs
 

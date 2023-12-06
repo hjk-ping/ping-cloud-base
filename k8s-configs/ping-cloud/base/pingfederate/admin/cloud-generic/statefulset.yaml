@@ -204,7 +204,7 @@ spec:
             optional: false
         - secretRef:
             name: pingfederate-admin-p14c
-            optional: true
+            optional: false
         resources:
           requests:
             memory: "2Gi"
@@ -326,6 +326,8 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: out-dir
+      annotations:
+        volume.autoscaler.kubernetes.io/ignore: "true"
     spec:
       accessModes:
       - ReadWriteOnce
