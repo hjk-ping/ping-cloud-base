@@ -5,6 +5,8 @@ metadata:
 spec:
   labels:
     provisionerType: fleet
+  consolidation:
+    enabled: true
   limits:
     resources:
       cpu: 300
