@@ -43,3 +43,6 @@ dsconfig set-backend-prop \
         --backend-name userRoot \
         --set default-cache-mode:cache-keys-only
 
+dsconfig set-backend-prop \
+        --backend-name appintegrations \
+        --set default-cache-mode:cache-keys-only 
