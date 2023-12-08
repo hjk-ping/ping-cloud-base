@@ -43,5 +43,3 @@ dsconfig set-local-db-index-prop \
 dsconfig set-backend-prop \
         --backend-name userRoot \
         --set default-cache-mode:cache-keys-only
-
-         
