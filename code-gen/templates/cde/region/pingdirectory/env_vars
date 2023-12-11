@@ -14,6 +14,3 @@ PD_X509_AUTH_CERTS=
 
 # Set to false to avoid skipping liveness probe. Skipping the liveness (SKIP_LIVENESS=true) is the default for PingDirectory.
 SKIP_LIVENESS=true
-
-# set to false to fully replace the profile if there is a change in server_profile when the pod restarts
-OPTIMIZE_REPLACE_PROFILE=false
