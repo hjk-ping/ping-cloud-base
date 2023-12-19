@@ -11,51 +11,20 @@ data:
     SCRIPT="${HOOKS_DIR}/90-restore-backup-s3.sh"
     test -z "${BACKUP_RESTORE_POD}" && export SERVER="${K8S_STATEFUL_SET_NAME}-0" || export SERVER="${BACKUP_RESTORE_POD}"
 
-    pause_replication () {
-      if "${PAUSE_REPLICATION_BEFORE_RESTORE}" && test ${NUM_REPLICAS} -gt 1; then
-        echo "Executing pre-initialization from within ${SERVER} pod for DNs: ${DNS_LIST}"
-        for DN in ${DNS_LIST}; do
-        # redirect stdout to /dev/null and stderr to logs
-          /tmp/kubectl exec "${SERVER}" -c pingdirectory -- sh -c \
-            "dsreplication pre-external-initialization \
-              --retryTimeoutSeconds \"${RETRY_TIMEOUT_SECONDS}\" \
-              --baseDN \"${DN}\" \
-              --no-prompt --ignoreWarnings >/dev/null"
-        done
-      fi
-    }
-
-    resume_replication() {
-      if "${PAUSE_REPLICATION_BEFORE_RESTORE}" && test ${NUM_REPLICAS} -gt 1; then
-        echo "Initializing replication from within ${SERVER} pod for DNs: ${DN_LIST} "
-        for DN in ${DNS_LIST}; do
-        # redirect stdout to /dev/null and stderr to logs
-          /tmp/kubectl exec "${SERVER}" -c pingdirectory -- sh -c \
-            "dsreplication initialize-all \
-              --retryTimeoutSeconds \"${RETRY_TIMEOUT_SECONDS}\" \
-              --baseDN \"${DN}\" \
-              --no-prompt --ignoreWarnings >/dev/null"
-        done
-
-        echo "Executing post-initialization from within ${SERVER} pod for DNs: ${DNS_LIST}"
-        for DN in ${DNS_LIST}; do
-        # redirect stdout to /dev/null and stderr to logs
-          /tmp/kubectl exec "${SERVER}" -c pingdirectory -- sh -c \
-            "dsreplication post-external-initialization \
-              --retryTimeoutSeconds \"${RETRY_TIMEOUT_SECONDS}\" \
-              --baseDN \"${DN}\" \
-              --no-prompt --ignoreWarnings >/dev/null"
-        done
-      fi
-    }
 
     delete_pvc() {
       /tmp/kubectl delete pvc pingdirectory-restore -n ${PING_CLOUD_NAMESPACE} --grace-period=0 --force
     }
 
     cleanup () {
-      resume_replication
       delete_pvc
+    }
+
+    disable_readiness_probe(){
+    # redirect stdout to /dev/null and stderr to logs
+    beluga_log "Disabling readiness probe abefore beginning the restore"
+          /tmp/kubectl exec "${SERVER}" -c pingdirectory -- sh -c \
+               sed -i '2i exit 1' "${HOOKS_DIR}/85-readiness.sh" >/dev/null
     }
 
     # This guarantees that cleanup method will always run, even if the restore job exits due to an error
@@ -70,27 +39,10 @@ data:
     NUM_REPLICAS=$(/tmp/kubectl get statefulset "${K8S_STATEFUL_SET_NAME}" -o jsonpath='{.spec.replicas}')
     echo "restore: number of replicas: ${NUM_REPLICAS}"
 
-    DN_LIST=
-    BASE_DNS_LIST="${USER_BASE_DN} ${USER_BASE_DN_2} ${USER_BASE_DN_3} ${USER_BASE_DN_4} ${USER_BASE_DN_5}"
-    # Separate each USER_BASE_DN with a ';'
-    BASE_DNS_LIST=$(echo ${BASE_DNS_LIST} | tr '[[:blank:]]/' ';')
-
-    if test -z "${REPLICATION_BASE_DNS}"; then
-      DN_LIST="${BASE_DNS_LIST}"
-    else
-    # Separate each USER_BASE_DN with a '|' to grep with a regex pattern.
-    # Example: grep -qE "dc=example,dc=com|dc=test,dc=com"
-
-      GREP_BASE_DNS_LIST=$(echo ${BASE_DNS_LIST} | tr ';' '|')
-      if echo "${REPLICATION_BASE_DNS}" | grep -qE "${GREP_BASE_DNS_LIST}"; then
-        DN_LIST="${REPLICATION_BASE_DNS}"
-      else
-        DN_LIST="${REPLICATION_BASE_DNS};${BASE_DNS_LIST}"
-      fi
-    fi
-    DNS_LIST=$(echo "${DN_LIST}" | tr ';' ' ')
-
-    pause_replication
+    disable_readiness_probe
+     
+    # doing a sleep for 30s before we kickoff the restore script
+    sleep 30
 
     if test -x ${SCRIPT}; then
       # Execute restore script if user has the permissions
