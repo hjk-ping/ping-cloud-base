@@ -102,6 +102,8 @@
 - Update alert rules for PGO
 - Nginx logs include request hostname
 - Update integration tests to be able to run locally
+- Update to P1AS to use ARN instead of name for IRSA roles
+- Replace healthcheck & metadata related manifests & configs with p1as-beluga-tools microservice
 
 _Changes:_
 
@@ -112,6 +114,7 @@ _Changes:_
 - [X] PDO-4847 Add weekly pipeline run logic for PCB
 - [X] PDO-4857 Add Beluga Tools code-gen directory to PCB
 - [X] PDO-4868 Update update-cluster-state script for MonoRepo
+- [X] PDO-4872 BelugaTools Cleanup
 - [X] PDO-4896 Update ping-cloud-base karpenter version to v0.28.1
 - [X] PDO-4900 Remove myping code
 - [X] PDO-5005 Update generate-cluster-state script to pull profiles from code-gen dir
@@ -123,6 +126,7 @@ _Changes:_
 - [X] PDO-5114 OpenSearch migration: Migrate PA dashboard
 - [X] PDO-5116 OpenSearch migration: Migrate PF dashboards
 - [X] PDO-5135 Implement IRSA role for aws cloud watch agent
+- [X] PDO-5136 Update to P1AS to use ARN instead of name for IRSA roles
 - [X] PDO-5145 OpenSearch migration: Develop index migration job
 - [X] PDO-5152 OpenSearch migration: Rewrite bootstrap scripts
 - [X] PDO-5158 Configure PA WAS from Shared P1 Tenant

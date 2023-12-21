@@ -421,7 +421,6 @@ ${VALUES_FILES_DNS_ZONE}
 ${DNS_ZONE_DERIVED}
 ${PRIMARY_DNS_ZONE}
 ${PRIMARY_DNS_ZONE_DERIVED}
-${METADATA_IMAGE_TAG}
 ${BOOTSTRAP_IMAGE_TAG}
 ${P14C_INTEGRATION_IMAGE_TAG}
 ${ANSIBLE_BELUGA_IMAGE_TAG}
@@ -1222,17 +1221,18 @@ for ENV_OR_BRANCH in ${SUPPORTED_ENVIRONMENT_TYPES}; do
 
   add_derived_variables
 
-  # TODO: With https://pingidentity.atlassian.net/browse/PP-5719 we should see all of the IRSA roles represented like
+  # TODO: With https://pingidentity.atlassian.net/browse/PP-6073 we should see all of the IRSA roles represented like
   # ArgoCD, then we can change this IRSA SSM fetch code to be consistent
   # shellcheck disable=SC2016
   IRSA_TEMPLATE='eks.amazonaws.com/role-arn: ${ssm_value}'
   set_var "IRSA_CERT_MANAGER_ANNOTATION_KEY_VALUE" "" "${ACCOUNT_BASE_PATH}" "${ENV}/irsa-role/cert-manager/arn" "${IRSA_TEMPLATE}"
   set_var "IRSA_EXTERNAL_DNS_ANNOTATION_KEY_VALUE" "" "${ACCOUNT_BASE_PATH}" "${ENV}/irsa-role/external-dns/arn" "${IRSA_TEMPLATE}"
   set_var "IRSA_PING_ANNOTATION_KEY_VALUE" "" "${ACCOUNT_BASE_PATH}" "${ENV}" "${IRSA_TEMPLATE}/irsa-ping"
-  set_var "IRSA_PA_ANNOTATION_KEY_VALUE" "" "${ACCOUNT_BASE_PATH}" "${ENV}" "${IRSA_TEMPLATE}/irsa-pingaccess"
-  set_var "IRSA_PD_ANNOTATION_KEY_VALUE" "" "${ACCOUNT_BASE_PATH}" "${ENV}" "${IRSA_TEMPLATE}/irsa-pingdirectory"
-  set_var "IRSA_PF_ANNOTATION_KEY_VALUE" "" "${ACCOUNT_BASE_PATH}" "${ENV}" "${IRSA_TEMPLATE}/irsa-pingfederate"
+  set_var "IRSA_PA_ANNOTATION_KEY_VALUE" "" "${ACCOUNT_BASE_PATH}" "${ENV}/irsa-role/pingaccess/arn" "${IRSA_TEMPLATE}"
+  set_var "IRSA_PD_ANNOTATION_KEY_VALUE" "" "${ACCOUNT_BASE_PATH}" "${ENV}/irsa-role/pingdirectory/arn" "${IRSA_TEMPLATE}"
+  set_var "IRSA_PF_ANNOTATION_KEY_VALUE" "" "${ACCOUNT_BASE_PATH}" "${ENV}/irsa-role/pingfederate/arn" "${IRSA_TEMPLATE}"
   set_var "IRSA_CWAGENT_ANNOTATION_KEY_VALUE" "" "${ACCOUNT_BASE_PATH}" "${ENV}/irsa-role/cloudwatch-agent/arn" "${IRSA_TEMPLATE}"
+  # ArgoCD only for customer-hub
   set_var "IRSA_ARGOCD_ANNOTATION_KEY_VALUE" "" "${IRSA_BASE_PATH}" "irsa-argocd/arn" "${IRSA_TEMPLATE}"
   set_var "IRSA_INGRESS_ANNOTATION_KEY_VALUE" "" "${ACCOUNT_BASE_PATH}" "${ENV}/irsa-role/ingress-controller/arn" "${IRSA_TEMPLATE}"
 
