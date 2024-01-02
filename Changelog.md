@@ -104,6 +104,8 @@
 - Update integration tests to be able to run locally
 - Update to P1AS to use ARN instead of name for IRSA roles
 - Replace healthcheck & metadata related manifests & configs with p1as-beluga-tools microservice
+- Increase OpenSearch warm replicas to 3 to make it HA
+- Renaming installP1asSubcharts value to isMicroserviceDeploy for microservices
 
 _Changes:_
 
@@ -246,8 +248,11 @@ _Changes:_
 - [X] PDO-6335 Newrelic-Prometheus-Agent: Send Kubernetes-volume-Autoscaler Metrics to New Relic
 - [X] PDO-6337 Migrate logstash to the GP3 volumes
 - [X] PDO-6338 Migrate Prometheus to the GP3 volumes
+- [X] PDO-6411 Increase OpenSearch warm replicas to 3 to make it HA
 - [X] PDO-6420 Update tag-release.sh to replace the helm chart versions in PCB
+- [X] PDO-6476 Update and implement dependency helm chart conditional value
 - [X] PDO-6482 Update nginx logs to include hostname
+- [X] PDO-6506 Update to fix karpenter provisoner config
 - [X] PDO-6526 Update integration tests to be able to run locally
 
 ### 1.18.0.0
