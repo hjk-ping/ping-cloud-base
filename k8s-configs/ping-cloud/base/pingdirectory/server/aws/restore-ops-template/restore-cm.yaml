@@ -22,9 +22,9 @@ data:
 
     disable_readiness_probe(){
     # redirect stdout to /dev/null and stderr to logs
-    echo "Disabling readiness probe abefore beginning the restore"
+    echo "Disabling readiness probe before beginning the restore"
           /tmp/kubectl exec "${SERVER}" -c pingdirectory -- sh -c \
-               sed -i '2i exit 1' "${HOOKS_DIR}/85-readiness.sh" >/dev/null
+               "sed -i '2i exit 1' "${HOOKS_DIR}/85-readiness.sh" >/dev/null"
     }
 
     # This guarantees that cleanup method will always run, even if the restore job exits due to an error
@@ -36,12 +36,9 @@ data:
 
     chmod +x /tmp/kubectl
 
-    NUM_REPLICAS=$(/tmp/kubectl get statefulset "${K8S_STATEFUL_SET_NAME}" -o jsonpath='{.spec.replicas}')
-    echo "restore: number of replicas: ${NUM_REPLICAS}"
-
     disable_readiness_probe
      
-    # doing a sleep for 30s before we kickoff the restore script
+    echo "sleeping for 30s before executing the restore script"
     sleep 30
 
     if test -x ${SCRIPT}; then
