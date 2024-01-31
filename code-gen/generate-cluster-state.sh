@@ -1335,6 +1335,18 @@ for ENV_OR_BRANCH in ${SUPPORTED_ENVIRONMENT_TYPES}; do
 
   PRIMARY_PING_KUST_FILE="${K8S_CONFIGS_DIR}/${REGION_NICK_NAME}/kustomization.yaml"
 
+
+  if "${IS_MULTI_CLUSTER}"; then
+     echo "This is a multi-cluster env, removing external-dns annotations from the pingdirectory-cluster service"
+     export pd_external_dns_annatation_patch="
+# pingdirectory-cluster service external-dns annotation
+- op: remove
+  path: /metadata/annotations/external-dns.alpha.kubernetes.io~1hostname
+"
+    K8S_CONFIGS_PD_KUSTOMIZE_FILE="${K8S_CONFIGS_DIR}/base/ping-cloud/pingdirectory/server/kustomization.yaml"
+    yq eval -i '.patchesJson6902[2].patch |= strenv(pd_external_dns_annatation_patch)' "${K8S_CONFIGS_PD_KUSTOMIZE_FILE}"
+  fi
+
   # Copy around files for Developer CDE before substituting vars
   if "${IS_BELUGA_ENV}"; then
     echo "IS_BELUGA_ENV detected, making developer changes to deployment"
