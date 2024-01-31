@@ -5,8 +5,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: pingdirectory
-  annotations:
-    external-dns.alpha.kubernetes.io/hostname: pingdirectory-cluster-dev.ping-demo.com
 spec:
   ports:
   - port: 1389

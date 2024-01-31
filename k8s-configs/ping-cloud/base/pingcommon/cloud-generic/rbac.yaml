@@ -176,12 +176,6 @@ rules:
       - list
       - watch
       - get
-  - apiGroups:
-      - ""
-    resources:
-      - endpoints
-    verbs:
-      - get
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
