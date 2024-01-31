@@ -119,6 +119,7 @@
 - Upgrade grafana-operator to 5.6.0
 - Deploy opensearch-operator with opensearch cluster
 - [Support STAGING-21293] Set --enable-annotation-validation for p1as nginx-ingress
+- Use AWS CLI to update DNS records for pingdirectory-cluster service within route53
 
 _Changes:_
 
@@ -283,6 +284,7 @@ _Changes:_
 - [X] PDO-6585 Upgrade all AWSCLI containers to the most recent stable version that includes support for ARM, v2.+
 - [X] PDO-6599 Migrate opensearch from plain yaml to the operator
 - [X] PDO-6620 [PORT] Add Use_Kubelet configuration parameters to fix Fluentbit Kubernetes filter
+- [X] PDO-6659 Use AWS CLI to update DNS records for pingdirectory-cluster service within route53
 
 ### 1.18.0.0
 

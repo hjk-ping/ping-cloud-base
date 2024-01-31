@@ -1337,7 +1337,7 @@ for ENV_OR_BRANCH in ${SUPPORTED_ENVIRONMENT_TYPES}; do
 
 
   if "${IS_MULTI_CLUSTER}"; then
-     echo "This is a multi-cluster env, removing external-dns annotations from the pingdirectory-cluster service"
+     echo "Since this is a multi-cluster env, removing external-dns annotations from the pingdirectory-cluster service"
      export pd_external_dns_annatation_patch="
 # pingdirectory-cluster service external-dns annotation
 - op: remove
