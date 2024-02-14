@@ -7,4 +7,6 @@ resources:
 - logstash_pipelines
 - hpa.yaml
 - logstash-search-template.yaml
-- unused-logstash-pv-cleanup.yaml
+- unused-pv-cleanup.yaml
+- secret.yaml
+- pdb.yaml

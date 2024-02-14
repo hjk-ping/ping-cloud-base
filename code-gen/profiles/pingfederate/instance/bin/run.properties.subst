@@ -205,7 +205,7 @@ pf.runtime.context.path=/
 # This property enables detailed event logging where changes to the components are logged.
 # Default is false
 #
-pf.log.eventdetail=false
+pf.log.eventdetail=true
 
 #
 # This property enables detailed system monitoring information to be made available
@@ -250,7 +250,8 @@ pf.cluster.node.index=
 # A strong, randomly-generated key (22 or more alphanumerics) is recommended.
 # In BCFIPS mode, if encryption is enabled, the minimum length of 22
 # characters is enforced.
-pf.cluster.auth.pwd=${PF_CLUSTER_AUTH_PASSWORD_OBFUSCATED}
+# Keep 'pf.cluster.auth.pwd' empty as it will be replaced by P1AS automation by injecting the obfuscated variable of PF_CLUSTER_AUTH_PASSWORD
+pf.cluster.auth.pwd=
 pf.cluster.encrypt=false
 
 # Specify the key size to use with the AES encryption algorithm that is used

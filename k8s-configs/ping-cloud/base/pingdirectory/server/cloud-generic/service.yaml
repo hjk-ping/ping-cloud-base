@@ -5,6 +5,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: pingdirectory
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "9102"
+    newrelic.io/scrape: "true"
 spec:
   ports:
   - port: 1389
