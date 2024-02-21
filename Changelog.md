@@ -124,7 +124,6 @@
 - [Support STAGING-21293] Set --enable-annotation-validation for p1as nginx-ingress
 - Use AWS CLI to update DNS records for pingdirectory-cluster service within route53
 - Ingress Failed to watch *v1.Secret: unknown (get secrets)
-- Fix the "pingfederate-cluster" service label selector
 - PF Heap Value: CSR upgrade-wrapper script should maintain edited values
 - Newrelic-Prometheus-Agent: Sending OpenSearch Metrics to New Relic
 - Increase PA, PF, PD logs ingestion into ELK
@@ -132,6 +131,9 @@
 - Newrelic-Prometheus-Agent: Sending Ping apps, ArgoCD and Karpenter metrics to NR
 - HPA: Update Logstash min pods to be at least 2 (to avoid service downtime over upgrades)
 - Update backup and CSD upload jobs to properly report failures
+- Add healthcheck feature flag
+- Add customer tenant to the Opensearch
+- Add nginx ingress signal 9 alert
 
 _Changes:_
 
@@ -270,6 +272,7 @@ _Changes:_
 - [X] PDO-6267 Update to enable detailed monitoring on instances
 - [X] PDO-6282 Modify appintegrations cache config within PingDirectory
 - [X] PDO-6287 OpenSearch Post-Migration: Security: Dashboard SSO - Update p14c-oauth-service
+- [X] PDO-6290 OpenSearch Post-Migration: Security: Dashboard SSO - Configure Customer tenant
 - [x] PDO-6305 Set Karpenter defaultInstanceProfile via Environment Variable
 - [X] PDO-6311 Argocd pod resources spec adjusted
 - [X] PDO-6323 Allow CSR to override the duration and renewBefore properties within cert-manager
@@ -301,7 +304,6 @@ _Changes:_
 - [X] PDO-6570 Nginx ingress-access logs are sent to the logstash index pattern instead of ingress-access index pattern
 - [X] PDO-6585 Upgrade all AWSCLI containers to the most recent stable version that includes support for ARM, v2.+
 - [X] PDO-6599 Migrate opensearch from plain yaml to the operator
-- [X] PDO-6615 Fix the "pingfederate-cluster" service label selector
 - [X] PDO-6615 Ingress Failed to watch *v1.Secret: unknown (get secrets)
 - [X] PDO-6620 [PORT] Add Use_Kubelet configuration parameters to fix Fluentbit Kubernetes filter
 - [X] PDO-6655 Implement the scaling pvc down once the number of logstash pods are scaled down
@@ -312,6 +314,11 @@ _Changes:_
 - [X] PDO-6676 Identify and map numeric fields in OpenSearch
 - [X] PDO-6685 HPA: Update Logstash min pods to be at least 2 (to avoid service downtime over upgrades)
 - [X] PDO-6713 Metadata is missing in NewRelic pod logs
+- [X] PDO-6726 Healthcheck feature is available when the feature flag is turned on
+- [X] PDO-6765 Create log based alert for 'signal 9' issues in ingress
+- [X] PDO-6677 indexmigration user does not have correct roles or access assigned
+- [X] PDO-6688 Update kube-state-metrics cluster tool
+- [X] PDO-6788 Remove Karpenter logging to NewRelic
 
 ### 1.18.0.0
 
@@ -424,6 +431,7 @@ _Changes:_
 - Improve logstash alerting in multi-regional cluster
 - Fail PingDirectory backup Job if any backend fails upon running backup CLI
 - Number of ES-warm nodes increased to 3
+- Update kube-state-metrics cluster tool to 2.10.1
 
 _Changes:_
 

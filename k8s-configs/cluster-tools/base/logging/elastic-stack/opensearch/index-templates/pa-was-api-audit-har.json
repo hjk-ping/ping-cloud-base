@@ -1,6 +1,6 @@
 {
   "index_patterns": [
-    "pd-expensive-write-ops-*"
+    "pa-was-api-audit-har-*"
   ],
   "template": {
     "settings": {
@@ -40,12 +40,6 @@
               "ignore_above": 256
             }
           }
-        },
-        "etime": {
-          "type": "float"
-        },
-        "qtime": {
-          "type": "float"
         },
         "host": {
           "type": "text",
@@ -200,7 +194,13 @@
           }
         },
         "log_string": {
-          "type": "text"
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
         },
         "stream": {
           "type": "text",
@@ -211,7 +211,57 @@
             }
           }
         },
+        "log": {
+          "properties": {
+            "_metadata": {
+              "properties": {
+                "duration": {
+                  "type": "long"
+                },
+                "proxyRoundTripMS": {
+                  "type": "long"
+                },
+                "reqReceivedMillisec": {
+                  "type": "long"
+                },
+                "reqSentMillisec": {
+                  "type": "long"
+                },
+                "respReceivedMillisec": {
+                  "type": "long"
+                },
+                "respSentMillisec": {
+                  "type": "long"
+                },
+                "responseCode": {
+                  "type": "integer"
+                },
+                "roundTripMS": {
+                  "type": "integer"
+                },
+                "userInfoReqSentMillisec": {
+                  "type": "long"
+                },
+                "userInfoRespReceivedMillisec": {
+                  "type": "long"
+                },
+                "userInfoRoundTripMS": {
+                  "type": "long"
+                }
+              }
+            }
+          }
+        },
         "tags": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "timestamp": {
           "type": "text",
           "fields": {
             "keyword": {
